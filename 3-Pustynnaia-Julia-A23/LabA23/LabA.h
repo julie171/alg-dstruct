@@ -17,13 +17,13 @@ char ChangeRegister(char letter);
 
 int Alphabet(char* newWord, char* prevWord, int length, int letter);
 
-word_t* CreateList(FILE* f);
+word_t* CreateList(const char* name);
 
 void Clearing(word_t* head);
 
-void PrintList(FILE* f);
+void PrintList(const char* name);
 
-void Check(FILE* f);
+void Check(const char* name);
 
 #ifdef __cplusplus
 }

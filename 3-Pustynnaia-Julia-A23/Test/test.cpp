@@ -78,11 +78,9 @@ TEST(Alphabet_Test, Alphabet_2DifferentWords_return0) {
 	EXPECT_TRUE(letter == 0);
 }
 TEST(CreateList_Test, CreateList_Words_returnValidItemsInValidOrder) {
-	FILE* f;
 	word_t* word;
 	word_t* head = (word_t*)malloc(sizeof(word_t));
-	fopen_s(&f, "Words.txt", "r");
-	head = CreateList(f);
+	head = CreateList("Words.txt");
 	word = head->next;
 	EXPECT_STREQ(word->word, "a");
 	word = word->next;
@@ -98,23 +96,17 @@ TEST(CreateList_Test, CreateList_Words_returnValidItemsInValidOrder) {
 	word = word->next;
 	EXPECT_STREQ(word->word, "broken");
 	Clearing(head);
-	fclose(f);
 }
 TEST(CreateList_Test, CreateList_EmptyFile_return0) {
-	FILE* f;
 	word_t* head = (word_t*)malloc(sizeof(word_t));
-	fopen_s(&f, "EmptyFile.txt", "r");
-	head = CreateList(f);
+	head = CreateList("EmptyFile.txt");
 	EXPECT_TRUE(head->next->next == NULL);
 	Clearing(head);
-	fclose(f);
 }
 TEST(CreateList_Test, CreateList_SortedWords_returnValidItemsInValidOrder) {
-	FILE* f;
 	word_t* word;
 	word_t* head = (word_t*)malloc(sizeof(word_t));
-	fopen_s(&f, "SortedWords.txt", "r");
-	head = CreateList(f);
+	head = CreateList("SortedWords.txt");
 	word = head->next;
 	EXPECT_STREQ(word->word, "Can");
 	word = word->next;
@@ -132,14 +124,10 @@ TEST(CreateList_Test, CreateList_SortedWords_returnValidItemsInValidOrder) {
 	word = word->next;
 	EXPECT_STREQ(word->word, "darY");
 	Clearing(head);
-	fclose(f);
 }
 TEST(CreateList_Test, CreateList_1Word_returnValidItem) {
-	FILE* f;
 	word_t* head = (word_t*)malloc(sizeof(word_t));
-	fopen_s(&f, "1Word.txt", "r");
-	head = CreateList(f);
+	head = CreateList("1Word.txt");
 	EXPECT_STREQ(head->next->word, "fish");
 	Clearing(head);
-	fclose(f);
 }
