@@ -24,12 +24,12 @@ word_t* ReadWord(FILE* f) {
 		returnValue = fscanf_s(f, "%c", &writtenWord[letter], sizeof(char));
 	}
 	writtenWord[letter] = '\0';
-	(*word).word = writtenWord;
-	(*word).length = letter;
+	word->word = writtenWord;
+	word->length = letter;
 	if (letter > 0 && returnValue == -1)
-		(*word).length = -1;
+		word->length = -1;
 	else if (letter == 0 && returnValue == -1)
-		(*word).length = -2;
+		word->length = -2;
 	return word;
 }
 
