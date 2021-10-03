@@ -32,6 +32,8 @@ word_t* CreateWord(FILE* f) {
 		return NULL;
 	word->next = NULL;
 	char* writtenWord = ReadWord(f, &returnValue, &length);
+	if (writtenWord == NULL)
+		return NULL;
 	word->word = writtenWord;
 	word->length = length;
 	if (length > 0 && returnValue == -1)
@@ -82,8 +84,17 @@ word_t* CreateList(const char* name) {
 	if (mistake != 0)
 		return NULL;
 	new = CreateWord(f);
-	while (new->length == 0)
+	if (new == NULL) {
+		Clearing1Word(head);
+		return NULL;
+	}
+	while (new->length == 0) {
 		new = CreateWord(f);
+		if (new == NULL) {
+			Clearing1Word(head);
+			return NULL;
+		}
+	}
 	if (new->length == -2) {
 		head->next = new;
 		return head;
@@ -95,20 +106,27 @@ word_t* CreateList(const char* name) {
 		head->next = new;
 		return head;
 	}
-	new->next = NULL;
 	head->next = new;
 	while (finish != 1) {
 		prev = head;
 		new = CreateWord(f);
-		while (new->length == 0) {
-			if (new->length == -2) {
-				free(new);
-				break;
-			}
-			new = CreateWord(f);
+		if (new == NULL) {
+			Clearing(head);
+			return NULL;
 		}
-		if (new->length == -2)
+		while (new->length == 0) {
+			new = CreateWord(f);
+			if (new == NULL) {
+				Clearing(head);
+				return NULL;
+			}
+			if (new->length == -2) 
+				break;
+		}
+		if (new->length == -2) {
+			Clearing1Word(new);
 			break;
+		}
 		if (new->length == -1) {
 			while (new->word[letter] != '\0')
 				letter++;

@@ -5,10 +5,13 @@ TEST(ReadWord_Test, ReadWord_ReadEmptyFile_returnNegative2) {
 	FILE* f;
 	int length;
 	int returnValue;
-	fopen_s(&f, "EmptyFile.txt", "r");
+	errno_t mistake = fopen_s(&f, "EmptyFile.txt", "r");
+	ASSERT_TRUE(mistake == 0);
 	char* word = ReadWord(f, &returnValue, &length);
+	ASSERT_TRUE(word != NULL);
 	EXPECT_TRUE(length == 0);
 	EXPECT_TRUE(returnValue == -1);
+	free(word);
 	fclose(f);
 }
 
@@ -16,30 +19,38 @@ TEST(ReadWord_Test, ReadWord_Read1Word_returnValidVal) {
 	FILE* f;
 	int length;
 	int returnValue;
-	fopen_s(&f, "Word.txt", "r");
+	errno_t mistake = fopen_s(&f, "Word.txt", "r");
+	ASSERT_TRUE(mistake == 0);
 	char* word = ReadWord(f, &returnValue, &length);
+	ASSERT_TRUE(word != NULL);
 	EXPECT_STREQ(word, "access");
 	EXPECT_TRUE(returnValue == -1);
 	EXPECT_TRUE(length == 6);
 	free(word);
 	fclose(f);
 }
+
 TEST(ReadWord_Test, ReadWord_ReadSeparator_return0) {
 	FILE* f;
 	int length;
 	int returnValue;
-	fopen_s(&f, "Separator.txt", "r");
+	errno_t mistake = fopen_s(&f, "Separator.txt", "r");
+	ASSERT_TRUE(mistake == 0);
 	char* word = ReadWord(f, &returnValue, &length);
+	ASSERT_TRUE(word != NULL);
 	EXPECT_TRUE(length == 0);
 	free(word);
 	fclose(f);
 }
+
 TEST(ReadWord_Test, ReadWord_ReadWordAndSeparator_returnValidVal) {
 	FILE* f;
 	int length;
 	int returnValue;
-	fopen_s(&f, "WordAndSeparator.txt", "r");
+	errno_t mistake = fopen_s(&f, "WordAndSeparator.txt", "r");
+	ASSERT_TRUE(mistake == 0);
 	char* word = ReadWord(f, &returnValue, &length);
+	ASSERT_TRUE(word != NULL);
 	EXPECT_TRUE(length == 6);
 	EXPECT_STREQ(word, "access");
 	free(word);
@@ -49,18 +60,22 @@ TEST(ReadWord_Test, ReadWord_ReadSeparators_return0) {
 	FILE* f;
 	int length;
 	int returnValue;
-	fopen_s(&f, "Separators.txt", "r");
+	errno_t mistake = fopen_s(&f, "Separators.txt", "r");
+	ASSERT_TRUE(mistake == 0);
 	char* word = ReadWord(f, &returnValue, &length);
+	ASSERT_TRUE(word != NULL);
 	EXPECT_TRUE(length == 0);
 	EXPECT_STREQ(word, "\0");
 	free(word);
 	fclose(f);
 }
+
 TEST(ChangeRegister_Test, ChangeRegister_CapitalLetter_returnLowercaseLetter) {
 	char letter = 'A';
 	letter = ChangeRegister(letter);
 	EXPECT_EQ(letter, 'a');
 }
+
 TEST(ChangeRegister_Test, ChangeRegister_LowercaseLetter_returnLowercaseLetter) {
 	char letter = 'a';
 	letter = ChangeRegister(letter);
@@ -86,8 +101,9 @@ TEST(Alphabet_Test, Alphabet_2DifferentWords_return0) {
 }
 TEST(CreateList_Test, CreateList_Words_returnValidItemsInValidOrder) {
 	word_t* word;
-	word_t* head = (word_t*)malloc(sizeof(word_t));
+	word_t* head;
 	head = CreateList("Words.txt");
+	ASSERT_TRUE(head != NULL);
 	word = head->next;
 	EXPECT_STREQ(word->word, "a");
 	word = word->next;
@@ -105,15 +121,17 @@ TEST(CreateList_Test, CreateList_Words_returnValidItemsInValidOrder) {
 	Clearing(head);
 }
 TEST(CreateList_Test, CreateList_EmptyFile_return0) {
-	word_t* head = (word_t*)malloc(sizeof(word_t));
+	word_t* head;
 	head = CreateList("EmptyFile.txt");
+	ASSERT_TRUE(head != NULL);
 	EXPECT_TRUE(head->next->next == NULL);
 	Clearing(head);
 }
 TEST(CreateList_Test, CreateList_SortedWords_returnValidItemsInValidOrder) {
 	word_t* word;
-	word_t* head = (word_t*)malloc(sizeof(word_t));
+	word_t* head;
 	head = CreateList("SortedWords.txt");
+	ASSERT_TRUE(head != NULL);
 	word = head->next;
 	EXPECT_STREQ(word->word, "Can");
 	word = word->next;
@@ -133,8 +151,9 @@ TEST(CreateList_Test, CreateList_SortedWords_returnValidItemsInValidOrder) {
 	Clearing(head);
 }
 TEST(CreateList_Test, CreateList_1Word_returnValidItem) {
-	word_t* head = (word_t*)malloc(sizeof(word_t));
+	word_t* head;
 	head = CreateList("1Word.txt");
+	ASSERT_TRUE(head != NULL);
 	EXPECT_STREQ(head->next->word, "fish");
 	Clearing(head);
 }
