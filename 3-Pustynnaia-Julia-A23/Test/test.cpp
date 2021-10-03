@@ -104,7 +104,7 @@ TEST(CreateList_Test, CreateList_Words_returnValidItemsInValidOrder) {
 	word_t* head;
 	head = CreateList("Words.txt");
 	ASSERT_TRUE(head != NULL);
-	word = head->next;
+	word = head;
 	EXPECT_STREQ(word->word, "a");
 	word = word->next;
 	EXPECT_STREQ(word->word, "I");
@@ -123,16 +123,14 @@ TEST(CreateList_Test, CreateList_Words_returnValidItemsInValidOrder) {
 TEST(CreateList_Test, CreateList_EmptyFile_return0) {
 	word_t* head;
 	head = CreateList("EmptyFile.txt");
-	ASSERT_TRUE(head != NULL);
-	EXPECT_TRUE(head->next->next == NULL);
-	Clearing(head);
+	EXPECT_TRUE(head == NULL);
 }
 TEST(CreateList_Test, CreateList_SortedWords_returnValidItemsInValidOrder) {
 	word_t* word;
 	word_t* head;
 	head = CreateList("SortedWords.txt");
 	ASSERT_TRUE(head != NULL);
-	word = head->next;
+	word = head;
 	EXPECT_STREQ(word->word, "Can");
 	word = word->next;
 	EXPECT_STREQ(word->word, "see");
@@ -154,6 +152,7 @@ TEST(CreateList_Test, CreateList_1Word_returnValidItem) {
 	word_t* head;
 	head = CreateList("1Word.txt");
 	ASSERT_TRUE(head != NULL);
-	EXPECT_STREQ(head->next->word, "fish");
+	EXPECT_STREQ(head->word, "fish");
+	EXPECT_TRUE(head->next == NULL);
 	Clearing(head);
 }

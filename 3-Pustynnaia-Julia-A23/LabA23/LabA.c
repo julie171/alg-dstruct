@@ -21,7 +21,6 @@ char* ReadWord(FILE* f, int* returnValue, int* letter) {
 	}
 	writtenWord[(*letter)] = '\0';
 	return writtenWord;
-	
 }
 
 word_t* CreateWord(FILE* f) {
@@ -32,8 +31,18 @@ word_t* CreateWord(FILE* f) {
 		return NULL;
 	word->next = NULL;
 	char* writtenWord = ReadWord(f, &returnValue, &length);
-	if (writtenWord == NULL)
+	if (writtenWord == NULL) {
+		Clearing1Word(word);
 		return NULL;
+	}
+	while (length == 0 && returnValue != -1) {
+		free(writtenWord);
+		writtenWord = ReadWord(f, &returnValue, &length);
+		if (writtenWord == NULL) {
+			Clearing1Word(word);
+			return NULL;
+		}
+	}
 	word->word = writtenWord;
 	word->length = length;
 	if (length > 0 && returnValue == -1)
@@ -71,10 +80,7 @@ word_t* CreateList(const char* name) {
 	word_t* new;
 	word_t* word;
 	word_t* prev;
-	word_t* head = (word_t*)malloc(sizeof(word_t));
-	if (head == NULL)
-		return head;
-	head->word = NULL;
+	word_t* head;
 	int letter = 0;
 	int length;
 	int finish = 0;
@@ -83,45 +89,25 @@ word_t* CreateList(const char* name) {
 	mistake = fopen_s(&f, name, "r");
 	if (mistake != 0)
 		return NULL;
-	new = CreateWord(f);
-	if (new == NULL) {
+	head = CreateWord(f);
+	if (head == NULL)
+		return NULL;
+	if (head->length == -2) {
 		Clearing1Word(head);
 		return NULL;
 	}
-	while (new->length == 0) {
-		new = CreateWord(f);
-		if (new == NULL) {
-			Clearing1Word(head);
-			return NULL;
-		}
-	}
-	if (new->length == -2) {
-		head->next = new;
-		return head;
-	}
-	if (new->length == -1) {
-		while (new->word[letter] != '\0')
+	if (head->length == -1) {
+		while (head->word[letter] != '\0')
 			letter++;
-		new->length = letter;
-		head->next = new;
+		head->length = letter;
 		return head;
 	}
-	head->next = new;
 	while (finish != 1) {
 		prev = head;
 		new = CreateWord(f);
 		if (new == NULL) {
-			Clearing(head);
+			Clearing1Word(head);
 			return NULL;
-		}
-		while (new->length == 0) {
-			new = CreateWord(f);
-			if (new == NULL) {
-				Clearing(head);
-				return NULL;
-			}
-			if (new->length == -2) 
-				break;
 		}
 		if (new->length == -2) {
 			Clearing1Word(new);
@@ -134,10 +120,14 @@ word_t* CreateList(const char* name) {
 			finish = 1;
 		}
 		length = new->length;
-		word = head->next;
+		word = head;
 		while (word != NULL) {
 			if (length < word->length) {
 				new->next = word;
+				if (prev == head) {
+					head = new;
+					break;
+				}
 				prev->next = new;
 				break;
 			}
@@ -149,8 +139,12 @@ word_t* CreateList(const char* name) {
 					letter = Alphabet(new->word, word->word, length, letter);
 				}
 				if (letter == -1) {
-					prev->next = new;
 					new->next = word;
+					if (prev == head) {
+						head = new;
+						break;
+					}
+					prev->next = new;
 					break;
 				}
 				new->next = word->next;
@@ -183,7 +177,7 @@ void Clearing(word_t* head) {
 		prevWord = word;
 		word = word->next;
 	}
-	free(prevWord);
+	Clearing1Word(prevWord);
 }
 
 void Clearing1Word(word_t* word) {
@@ -192,12 +186,11 @@ void Clearing1Word(word_t* word) {
 }
 
 void PrintList(const char* name) {
-	int N = 1;
+	int N = 0;
 	word_t* head = CreateList(name);
 	if (head == NULL)
 		return;
-	word_t* word;
-	word = head->next;
+	word_t* word = head;
 	while (word != NULL) {
 		if (word->length > N)
 			printf("%s\n", word->word);
@@ -214,7 +207,7 @@ void Check(const char* name) {
 		return;
 	printf("Enter a number\n");
 	scanf_s("%d", &N);
-	word = head->next;
+	word = head;
 	while (word != NULL) {
 		if (word->length == N)
 			printf("%s\n", word->word);
