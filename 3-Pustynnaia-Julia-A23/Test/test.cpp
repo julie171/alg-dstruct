@@ -3,49 +3,56 @@
 
 TEST(ReadWord_Test, ReadWord_ReadEmptyFile_returnNegative2) {
 	FILE* f;
+	int length;
+	int returnValue;
 	fopen_s(&f, "EmptyFile.txt", "r");
-	word_t* word = ReadWord(f);
-	EXPECT_TRUE(word->length == -2);
-	free(word->word);
-	free(word);
+	char* word = ReadWord(f, &returnValue, &length);
+	EXPECT_TRUE(length == 0);
+	EXPECT_TRUE(returnValue == -1);
 	fclose(f);
 }
+
 TEST(ReadWord_Test, ReadWord_Read1Word_returnValidVal) {
 	FILE* f;
+	int length;
+	int returnValue;
 	fopen_s(&f, "Word.txt", "r");
-	word_t* word = ReadWord(f);
-	EXPECT_STREQ(word->word, "access");
-	EXPECT_TRUE(word->length == -1);
-	free(word->word);
+	char* word = ReadWord(f, &returnValue, &length);
+	EXPECT_STREQ(word, "access");
+	EXPECT_TRUE(returnValue == -1);
+	EXPECT_TRUE(length == 6);
 	free(word);
 	fclose(f);
 }
 TEST(ReadWord_Test, ReadWord_ReadSeparator_return0) {
 	FILE* f;
+	int length;
+	int returnValue;
 	fopen_s(&f, "Separator.txt", "r");
-	word_t* word = ReadWord(f);
-	EXPECT_TRUE(word->length == 0);
-	free(word->word);
+	char* word = ReadWord(f, &returnValue, &length);
+	EXPECT_TRUE(length == 0);
 	free(word);
 	fclose(f);
 }
 TEST(ReadWord_Test, ReadWord_ReadWordAndSeparator_returnValidVal) {
 	FILE* f;
+	int length;
+	int returnValue;
 	fopen_s(&f, "WordAndSeparator.txt", "r");
-	word_t* word = ReadWord(f);
-	EXPECT_TRUE(word->length > 0);
-	EXPECT_STREQ(word->word, "access");
-	free(word->word);
+	char* word = ReadWord(f, &returnValue, &length);
+	EXPECT_TRUE(length == 6);
+	EXPECT_STREQ(word, "access");
 	free(word);
 	fclose(f);
 }
 TEST(ReadWord_Test, ReadWord_ReadSeparators_return0) {
 	FILE* f;
+	int length;
+	int returnValue;
 	fopen_s(&f, "Separators.txt", "r");
-	word_t* word = ReadWord(f);
-	EXPECT_TRUE(word->length == 0);
-	EXPECT_STREQ(word->word, "\0");
-	free(word->word);
+	char* word = ReadWord(f, &returnValue, &length);
+	EXPECT_TRUE(length == 0);
+	EXPECT_STREQ(word, "\0");
 	free(word);
 	fclose(f);
 }

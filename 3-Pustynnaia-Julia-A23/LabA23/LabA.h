@@ -11,7 +11,9 @@ typedef struct word_t {
 	struct word_t* next;
 } word_t;
 
-word_t* ReadWord(FILE* f);
+char* ReadWord(FILE* f, int* returnValue, int* letter);
+
+word_t* CreateWord(FILE* f);
 
 char ChangeRegister(char letter);
 
@@ -20,6 +22,8 @@ int Alphabet(char* newWord, char* prevWord, int length, int letter);
 word_t* CreateList(const char* name);
 
 void Clearing(word_t* head);
+
+void Clearing1Word(word_t* word);
 
 void PrintList(const char* name);
 

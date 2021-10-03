@@ -2,33 +2,41 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-word_t* ReadWord(FILE* f) {
-	int letter = 0;
-	int returnValue = 0;
+char* ReadWord(FILE* f, int* returnValue, int* letter) {
+	(*letter) = 0;
+	(*returnValue) = 0;
 	char* writtenWord = NULL;
 	char* tempStorage;
+	writtenWord = (char*)malloc(sizeof(char));
+	if (writtenWord == NULL)
+		return NULL;
+	(*returnValue) = fscanf_s(f, "%c", &writtenWord[0], sizeof(char));
+	while ((writtenWord[(*letter)] >= 'A' && writtenWord[(*letter)] <= 'Z') || (writtenWord[(*letter)] >= 'a' && writtenWord[(*letter)] <= 'z')) {
+		(*letter)++;
+		tempStorage = (char*)realloc(writtenWord, (1 + (*letter)) * sizeof(char));
+		if (tempStorage != NULL) {
+			writtenWord = tempStorage;
+		}
+		(*returnValue) = fscanf_s(f, "%c", &writtenWord[(*letter)], sizeof(char));
+	}
+	writtenWord[(*letter)] = '\0';
+	return writtenWord;
+	
+}
+
+word_t* CreateWord(FILE* f) {
+	int length;
+	int returnValue;
 	word_t* word = (word_t*)malloc(sizeof(word_t));
 	if (word == NULL)
 		return NULL;
 	word->next = NULL;
-	writtenWord = (char*)malloc(sizeof(char));
-	if (writtenWord == NULL)
-		return NULL;
-	returnValue = fscanf_s(f, "%c", &writtenWord[0], sizeof(char));
-	while ((writtenWord[letter] >= 'A' && writtenWord[letter] <= 'Z') || (writtenWord[letter] >= 'a' && writtenWord[letter] <= 'z')) {
-		letter++;
-		tempStorage = (char*)realloc(writtenWord, (1 + letter) * sizeof(char));
-		if (tempStorage != NULL) {
-			writtenWord = tempStorage;
-		}
-		returnValue = fscanf_s(f, "%c", &writtenWord[letter], sizeof(char));
-	}
-	writtenWord[letter] = '\0';
+	char* writtenWord = ReadWord(f, &returnValue, &length);
 	word->word = writtenWord;
-	word->length = letter;
-	if (letter > 0 && returnValue == -1)
+	word->length = length;
+	if (length > 0 && returnValue == -1)
 		word->length = -1;
-	else if (letter == 0 && returnValue == -1)
+	else if (length == 0 && returnValue == -1)
 		word->length = -2;
 	return word;
 }
@@ -68,11 +76,14 @@ word_t* CreateList(const char* name) {
 	int letter = 0;
 	int length;
 	int finish = 0;
+	errno_t mistake;
 	FILE* f;
-	fopen_s(&f, name, "r");
-	new = ReadWord(f);
+	mistake = fopen_s(&f, name, "r");
+	if (mistake != 0)
+		return NULL;
+	new = CreateWord(f);
 	while (new->length == 0)
-		new = ReadWord(f);
+		new = CreateWord(f);
 	if (new->length == -2) {
 		head->next = new;
 		return head;
@@ -88,13 +99,13 @@ word_t* CreateList(const char* name) {
 	head->next = new;
 	while (finish != 1) {
 		prev = head;
-		new = ReadWord(f);
+		new = CreateWord(f);
 		while (new->length == 0) {
 			if (new->length == -2) {
 				free(new);
 				break;
 			}
-			new = ReadWord(f);
+			new = CreateWord(f);
 		}
 		if (new->length == -2)
 			break;
@@ -150,12 +161,16 @@ void Clearing(word_t* head) {
 	prevWord = head;
 	word = head->next;
 	while (word != NULL) {
-		free(prevWord->word);
-		free(prevWord);
+		Clearing1Word(prevWord);
 		prevWord = word;
 		word = word->next;
 	}
 	free(prevWord);
+}
+
+void Clearing1Word(word_t* word) {
+	free(word->word);
+	free(word);
 }
 
 void PrintList(const char* name) {
