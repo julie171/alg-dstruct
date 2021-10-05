@@ -97,7 +97,7 @@ TEST(CreateWord_Test, CreateWord_ReadEmptyFile_returnNegative2) {
 	word_t* word = CreateWord(f);
 	ASSERT_TRUE(word != NULL);
 	EXPECT_TRUE(word->length == -2);
-	EXPECT_STREQ(word->word, "");
+	EXPECT_STREQ(word->word, "\0");
 	EXPECT_TRUE(word->next == NULL);
 	Clearing1Word(word);
 	fclose(f);
@@ -112,7 +112,7 @@ TEST(CreateWord_Test, CreateWord_ReadSeparator_returnNegative2) {
 	word_t* word = CreateWord(f);
 	ASSERT_TRUE(word != NULL);
 	EXPECT_TRUE(word->length == -2);
-	EXPECT_STREQ(word->word, "");
+	EXPECT_STREQ(word->word, "\0");
 	EXPECT_TRUE(word->next == NULL);
 	Clearing1Word(word);
 	fclose(f);
