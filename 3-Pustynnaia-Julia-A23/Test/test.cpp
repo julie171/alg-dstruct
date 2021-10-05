@@ -39,6 +39,7 @@ TEST(ReadWord_Test, ReadWord_ReadSeparator_return0) {
 	char* word = ReadWord(f, &returnValue, &length);
 	ASSERT_TRUE(word != NULL);
 	EXPECT_TRUE(length == 0);
+	EXPECT_TRUE(returnValue == 1);
 	EXPECT_STREQ(word, "\0");
 	free(word);
 	fclose(f);
@@ -54,6 +55,7 @@ TEST(ReadWord_Test, ReadWord_ReadWordAndSeparator_returnValidVal) {
 	ASSERT_TRUE(word != NULL);
 	EXPECT_TRUE(length == 6);
 	EXPECT_STREQ(word, "access");
+	EXPECT_TRUE(returnValue == 1);
 	free(word);
 	fclose(f);
 }
