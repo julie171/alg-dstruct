@@ -14,9 +14,10 @@ char* ReadWord(FILE* f, int* returnValue, int* letter) {
 	while ((writtenWord[(*letter)] >= 'A' && writtenWord[(*letter)] <= 'Z') || (writtenWord[(*letter)] >= 'a' && writtenWord[(*letter)] <= 'z')) {
 		(*letter)++;
 		tempStorage = (char*)realloc(writtenWord, (1 + (*letter)) * sizeof(char));
-		if (tempStorage != NULL) {
-			writtenWord = tempStorage;
+		if (tempStorage == NULL) {
+			return NULL;
 		}
+		writtenWord = tempStorage;
 		(*returnValue) = fscanf_s(f, "%c", &writtenWord[(*letter)], sizeof(char));
 	}
 	writtenWord[(*letter)] = '\0';
