@@ -15,7 +15,7 @@ char* ReadWord(FILE* f, int* returnValue, int* letter) {
 		(*letter)++;
 		tempStorage = (char*)realloc(writtenWord, (1 + (*letter)) * sizeof(char));
 		if (tempStorage == NULL) {
-			free(tempStorage);
+			free(writtenWord);
 			return NULL;
 		}
 		writtenWord = tempStorage;
