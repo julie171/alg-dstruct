@@ -17,10 +17,9 @@ int LengthOfNumber(int num) {
 
 void AdjacencyListDestroy(adjacency_list_t* adjacencyList) {
     int i = 0;
-    for (i = 0; i < adjacencyList->quantOfVertices; i++) {
+    for (i = 0; i < adjacencyList->quantOfVertices; i++) 
         if (adjacencyList->arrayOfVert[i].neighbour != NULL)
             free(adjacencyList->arrayOfVert[i].neighbour);
-    }
     free(adjacencyList->arrayOfVert);
     free(adjacencyList);
 }
@@ -70,9 +69,8 @@ int StackPushAllNeighboursOfVertex(stack_t* stack, adjacency_list_t* graph, int 
     int neighbour = 0;
     for (; i >= 0; i--) {
         neighbour = graph->arrayOfVert[vertex].neighbour[i];
-        if (StackPush(stack, neighbour) == NULL) {
+        if (StackPush(stack, neighbour) == NULL) 
             return 0;
-        }
     }
     return 1;
 }
@@ -175,8 +173,7 @@ adjacency_list_t* ReadAdjacencyList(FILE* stream) {
             adjacencyList->arrayOfVert[currentVertex].neighbour = tempStorage;
             lastNeighbourId = adjacencyList->arrayOfVert[currentVertex].quantOfNeighb - 1;
             adjacencyList->arrayOfVert[currentVertex].neighbour[lastNeighbourId] = currentNeighbour;
-            tempStorage = (int*)realloc(adjacencyList->arrayOfVert[currentNeighbour].neighbour,
-                ++adjacencyList->arrayOfVert[currentNeighbour].quantOfNeighb * sizeof(int));
+            tempStorage = (int*)realloc(adjacencyList->arrayOfVert[currentNeighbour].neighbour, ++adjacencyList->arrayOfVert[currentNeighbour].quantOfNeighb * sizeof(int));
             if (tempStorage == NULL) {
                 free(stringStorage);
                 AdjacencyListDestroy(adjacencyList);
