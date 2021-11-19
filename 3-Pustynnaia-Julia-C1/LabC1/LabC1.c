@@ -98,6 +98,7 @@ int DepthFirstSearch(adjacency_list_t* graph, int vertex, FILE* stream) {
     fprintf(stream, "%d ", vertex);
     if (StackPushAllNeighboursOfVertex(stack, graph, vertex) == 0) {
         StackDestroy(stack);
+        free(visited);
         return 0;
     }
     while (StackIsEmpty(stack) == 0) {
@@ -107,6 +108,7 @@ int DepthFirstSearch(adjacency_list_t* graph, int vertex, FILE* stream) {
             fprintf(stream, "%d ", currentVertex);
             if (StackPushAllNeighboursOfVertex(stack, graph, currentVertex) == 0) {
                 StackDestroy(stack);
+                free(visited);
                 return 0;
             }
         }
