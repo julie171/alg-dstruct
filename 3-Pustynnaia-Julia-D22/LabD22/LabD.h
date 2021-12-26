@@ -47,7 +47,7 @@ extern "C" {
 
     int* VisitedInit(adjacency_list_t* graph);
 
-    int LabSolution(FILE* input, FILE* output);
+    int LabSolution(const char* input, const char* output);
 
 #ifdef __cplusplus
 }

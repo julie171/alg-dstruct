@@ -112,6 +112,7 @@ void FreeWrongWay(queue_t* queue, int vertex, int* visited) {
         queue->tail = NULL;
         queue->head = NULL;
     }
+    visited[ptr->value] = 0;
     free(ptr);
 }
 
@@ -127,11 +128,8 @@ int TheLongestWay(adjacency_list_t* graph, queue_t* queue, int vertex, int K, in
     visited[vertex] = 1;
     if (queue->head == NULL) {
         queue->head = (node_t*)malloc(sizeof(node_t));
-        if (queue->head == NULL) {
-            FreeAllQueue(queue);
-            FreeVisited(visited);
+        if (queue->head == NULL) 
             return 0;
-        }
         queue->head->value = vertex;
         queue->head->next = NULL;
         queue->tail = queue->head;
@@ -139,11 +137,8 @@ int TheLongestWay(adjacency_list_t* graph, queue_t* queue, int vertex, int K, in
     }
     else {
         queue->tail->next = (node_t*)malloc(sizeof(node_t));
-        if (queue->tail->next == NULL) {
-            FreeAllQueue(queue);
-            FreeVisited(visited);
+        if (queue->tail->next == NULL) 
             return 0;
-        }
         queue->length += 1;
         queue->tail->next->value = vertex;
         queue->tail = queue->tail->next;
@@ -155,11 +150,8 @@ int TheLongestWay(adjacency_list_t* graph, queue_t* queue, int vertex, int K, in
             if (neighbValue == t) {
                 visited[neighbValue] = 1;
                 queue->tail->next = (node_t*)malloc(sizeof(node_t));
-                if (queue->tail->next == NULL) {
-                    FreeAllQueue(queue);
-                    FreeVisited(visited);
+                if (queue->tail->next == NULL)
                     return 0;
-                }
                 queue->length++;
                 queue->tail->next->value = neighbValue;
                 queue->tail = queue->tail->next;
@@ -170,11 +162,8 @@ int TheLongestWay(adjacency_list_t* graph, queue_t* queue, int vertex, int K, in
                 }
             }
             else {
-                if (TheLongestWay(graph, queue, neighbValue, K, t, success, visited) == 0) {
-                    FreeAllQueue(queue);
-                    FreeVisited(visited);
+                if (TheLongestWay(graph, queue, neighbValue, K, t, success, visited) == 0) 
                     return 0;
-                }
                 if ((*success) == 1)
                     return 1;
             }
@@ -202,32 +191,48 @@ int* VisitedInit(adjacency_list_t* graph) {
     return visited;
 }
 
-int LabSolution(FILE* input, FILE* output) {
+int LabSolution(const char* input, const char* output) {
     int s = 0;
+    FILE* streamInput = NULL;
+    FILE* streamOutput = NULL;
+    errno_t mistake = fopen_s(&streamInput, input, "r");
+    if (mistake != 0)
+        return 0;
+    mistake = fopen_s(&streamOutput, output, "w");
+    if (mistake != 0)
+        return 0;
     int t = 0;
     int K = 0;
     int* visited = NULL;
     int success = 0;
-    adjacency_list_t* graph = ReadFromStream(input, &s, &t, &K);
+    adjacency_list_t* graph = ReadFromStream(streamInput, &s, &t, &K);
+    fclose(streamInput);
     if (graph == NULL)
         return 0;
     queue_t* queue = QueueInit();
     if (queue == NULL) {
         AdjacencyListDestroy(graph);
+        fclose(streamOutput);
         return 0;
     }
     visited = VisitedInit(graph);
     if (visited == NULL) {
+        AdjacencyListDestroy(graph);
         FreeAllQueue(queue);
+        fclose(streamOutput);
         return 0;
     }
     if (TheLongestWay(graph, queue, s - 1, K, t - 1, &success, visited) == 0) {
+        FreeAllQueue(queue);
+        FreeVisited(visited);
         AdjacencyListDestroy(graph);
+        fclose(streamOutput);
         return 0;
     }
     FreeVisited(visited);
-    WriteQueue(output, queue, success);
+    WriteQueue(streamOutput, queue, success);
     AdjacencyListDestroy(graph);
     FreeAllQueue(queue);
+    fclose(streamOutput);
     return 1;
 }
