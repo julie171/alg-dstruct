@@ -186,9 +186,9 @@ int TheLongestWay(adjacency_list_t* graph, queue_t* queue, int vertex, int K, in
     return 1;
 }
 
-void WriteQueue(FILE* stream, queue_t* queue, int* success) {
+void WriteQueue(FILE* stream, queue_t* queue, int success) {
     node_t* ptr = NULL;
-    if ((*success) == 0)
+    if (success == 0)
         fprintf(stream, "%d", 0);
     else {
         ptr = queue->head;
@@ -229,7 +229,7 @@ int LabSolution(FILE* input, FILE* output) {
         return 0;
     }
     FreeVisited(visited);
-    WriteQueue(output, queue, &success);
+    WriteQueue(output, queue, success);
     AdjacencyListDestroy(graph);
     FreeAllQueue(queue);
     return 1;

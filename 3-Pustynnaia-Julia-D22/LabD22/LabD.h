@@ -43,7 +43,7 @@ extern "C" {
 
     int TheLongestWay(adjacency_list_t* graph, queue_t* queue, int vertex, int K, int t, int* success, int* visited);
 
-    void WriteQueue(FILE* stream, queue_t* queue, int* success);
+    void WriteQueue(FILE* stream, queue_t* queue, int success);
 
     int* VisitedInit(adjacency_list_t* graph);
 
