@@ -99,26 +99,20 @@ void FreeAllQueue(queue_t* queue) {
 }
 
 void FreeWrongWay(queue_t* queue, int vertex, int* visited) {
-    int count = 1;
     node_t* ptr = queue->head;
-    node_t* temp = NULL;
     if (ptr->next != NULL) {
-        while (ptr->next->value != vertex) {
-            count++;
+        while (ptr->next != queue->tail)
             ptr = ptr->next;
-        }
         queue->tail = ptr;
         ptr = ptr->next;
         queue->tail->next = NULL;
-        queue->length = count;
+        queue->length = queue->length - 1;
     }
-    temp = ptr;
-    while (temp != NULL) {
-        ptr = ptr->next;
-        visited[temp->value] = 0;
-        free(temp);
-        temp = ptr;
+    else {
+        queue->tail = NULL;
+        queue->head = NULL;
     }
+    free(ptr);
 }
 
 void FreeVisited(int* visited) {
@@ -176,7 +170,11 @@ int TheLongestWay(adjacency_list_t* graph, queue_t* queue, int vertex, int K, in
                 }
             }
             else {
-                TheLongestWay(graph, queue, neighbValue, K, t, success, visited);
+                if (TheLongestWay(graph, queue, neighbValue, K, t, success, visited) == 0) {
+                    FreeAllQueue(queue);
+                    FreeVisited(visited);
+                    return 0;
+                }
                 if ((*success) == 1)
                     return 1;
             }
