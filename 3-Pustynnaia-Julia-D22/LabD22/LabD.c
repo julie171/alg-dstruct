@@ -111,6 +111,7 @@ void FreeWrongWay(queue_t* queue, int vertex, int* visited) {
     else {
         queue->tail = NULL;
         queue->head = NULL;
+        queue->length = 0;
     }
     visited[ptr->value] = 0;
     free(ptr);
