@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "LabD.h"
 
-#define TEST_NUM_OF_VERTICES 999
+#define TEST_NUM_OF_VERTICES 9000
 
 TEST(FunctionalTest, TheLongestWay_Test1) {
     int returnValue = LabSolution("Test1.txt", "Output.txt");
@@ -37,43 +37,27 @@ OS: Windows 10 Home, Version 20H2, Build 19042.1348
 CPU: AMD Ryzen 5 3500U with Radeon Vega Mobile Gfx 2.10 GHz
 RAM: 8,00 GB
 STRESSTEST RESULTS:
-    GRAPH TRAVERSAL TIME: 20 ms
-    USED MEMORY: 100 KB
+    GRAPH TRAVERSAL TIME: 120 ms
+    USED MEMORY: 2 ÌB
 */
 
+TEST(StressTest, TheLongestWay_StressTest_GraphGenerating) {
+    const int maxDeltaNeighbour = TEST_NUM_OF_VERTICES;
+    FILE* fileGraph;
+    fopen_s(&fileGraph, "TestFile.txt", "w");
+    ASSERT_TRUE(fileGraph != NULL);
+    int i = 1;
+    int neighbour = 1;
+    fprintf(fileGraph, "%d %d %d %d\n", TEST_NUM_OF_VERTICES, 1, (rand() % (maxDeltaNeighbour - 2) + 2), (rand() % 20 + 2));
+    for (; i < TEST_NUM_OF_VERTICES - 2; i++) {
+        for (neighbour = i + rand() % (maxDeltaNeighbour - i - 2) + 1; neighbour < TEST_NUM_OF_VERTICES - 1; neighbour += rand() % (maxDeltaNeighbour - 1) + 1)
+            fprintf(fileGraph, "%d %d\n", i, neighbour);
+    }
+    fprintf(fileGraph, "%d %d", TEST_NUM_OF_VERTICES - 1, TEST_NUM_OF_VERTICES);
+    fclose(fileGraph);
+}
+
 TEST(StressTest, TheLongestWay_StressTest) {
-    FILE* fileStream = NULL;
-    node_t* ptr = NULL;
-    int success = 0;
-    int returnValue = 0;
-    int s = 0;
-    int t = 0;
-    int K = 0;
-    int* visited = NULL;
-    fopen_s(&fileStream, "TestFile.txt", "r");
-    ASSERT_TRUE(fileStream != NULL);
-    adjacency_list_t* graph = ReadFromStream(fileStream, &s, &t, &K);
-    fclose(fileStream);
-    ASSERT_TRUE(graph != NULL);
-    visited = VisitedInit(graph);
-    if (visited == NULL) {
-        AdjacencyListDestroy(graph);
-        ASSERT_TRUE(visited != NULL);
-    }
-    queue_t* queue = QueueInit();
-    if (queue == NULL) {
-        AdjacencyListDestroy(graph);
-        FreeVisited(visited);
-        ASSERT_TRUE(queue != NULL);
-    }
-    returnValue = TheLongestWay(graph, queue, s - 1, K, t - 1, &success, visited);
-    if (returnValue == 0) {
-        FreeAllQueue(queue);
-        FreeVisited(visited);
-        AdjacencyListDestroy(graph);
-        ASSERT_TRUE(returnValue != 0);
-    }
-    FreeVisited(visited);
-    FreeAllQueue(queue);
-    AdjacencyListDestroy(graph);
+    int returnValue = LabSolution("TestFile.txt", "Output.txt");
+    ASSERT_TRUE(returnValue != 0);
 }
