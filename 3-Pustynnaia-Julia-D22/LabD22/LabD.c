@@ -194,7 +194,6 @@ void WriteQueue(FILE* stream, queue_t* queue, int success) {
             fprintf(stream, "%d ", ptr->value + 1);
             ptr = ptr->next;
         }
-        FreeAllQueue(queue);
     }
 }
 
