@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "SplayTree.h"
+#include "LabH40.h"
 
 node_t* RotateLeft(node_t* chosen_node) {
     if (chosen_node == NULL)
@@ -118,7 +118,9 @@ int Interface() {
     node_t* root = NULL;
     char action = 0;
     int key = 0;
-    while (fscanf(stdin, "%c %d", &action, &key) > 0) {
+    gets(&action);
+    while (action != '\n') {
+        scanf_s(" %d", & key);
         switch (action) {
         case 'a':
             root = AddNode(root, key);
@@ -140,6 +142,7 @@ int Interface() {
                 printf("no\n");
             break;
         }
+        gets(&action);
     }
     FreeTree(root);
     return 1;
