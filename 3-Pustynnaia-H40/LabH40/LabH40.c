@@ -1,6 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "LabH40.h"
+
+typedef struct node_t {
+    int key;
+    struct node_t* left;
+    struct node_t* right;
+} node_t;
 
 node_t* RotateLeft(node_t* chosen_node) {
     if (chosen_node == NULL)
@@ -79,10 +84,8 @@ node_t* AddNode(node_t* root, int key) {
     if (root->key == key)
         return root;
     addedNode = SplayTreeInit(key);
-    if (addedNode == NULL) {
-        FreeTree(root);
+    if (addedNode == NULL) 
         return NULL;
-    }
     if (root->key > key) {
         addedNode->right = root;
         addedNode->left = root->left;
@@ -124,8 +127,6 @@ int Interface() {
         switch (action) {
         case 'a':
             root = AddNode(root, key);
-            if (root == NULL)
-                return 0;
             break;
         case 'r':
             root = DeleteNode(root, key);
