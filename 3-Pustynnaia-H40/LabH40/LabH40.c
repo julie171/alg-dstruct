@@ -121,9 +121,7 @@ int Interface() {
     node_t* root = NULL;
     char action = 0;
     int key = 0;
-    gets(&action);
-    while (action != '\n') {
-        scanf_s(" %d", & key);
+    while (fscanf(stdin, "%c %d", &action, &key) > 0) {
         switch (action) {
         case 'a':
             root = AddNode(root, key);
