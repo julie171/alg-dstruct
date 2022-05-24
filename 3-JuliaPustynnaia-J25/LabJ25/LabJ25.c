@@ -2,13 +2,12 @@
 #include <stdio.h>
 #include <string.h>
 
-#define INPUT_SIZE 16
-#define SIZEMAP 4000133
+#define INPUT_SIZE 128
+#define MAP_SIZE 4000133
 #define CONST_1 4000133
 #define CONST_2 9157
 
 typedef struct {
-	int key;
 	char* value;
 	int isFilled;
 } node_t;
@@ -29,16 +28,12 @@ char* CopyStr(char* str) {
 	return newStr;
 }
 
-hashTable_t* TableInit(int size) {
-	hashTable_t* table = (hashTable_t*)malloc(sizeof(hashTable_t));
-	if (table == NULL)
-		return NULL;
+hashTable_t TableInit(int size) {
+	hashTable_t table;
 	table->size = size;
 	table->nodes = (node_t*)malloc(size * sizeof(node_t));
-	if (table->nodes == NULL) {
-		free(table);
-		return NULL;
-	}
+	if (table->nodes == NULL)
+		table->size = 0;
 	for (int i = 0; i < table->size; ++i) {
 		table->nodes[i].value = NULL;
 		table->nodes[i].isFilled = 0;
@@ -46,14 +41,32 @@ hashTable_t* TableInit(int size) {
 	return table;
 }
 
-int FindNode(hashTable_t* map, int key) {
-	int x = key % CONST_1;
-	int y = 1 + (key % CONST_2);
-	int index = 0;
+unsigned Func1(char* str, int size) {
+	unsigned res = 0;
+	for (int i = 0; str[i] != 0; ++i) {
+		res += (unsigned)str[i];
+		res %= CONST_1;
+	}
+	return res;
+}
+
+unsigned Func2(char* str, int size) {
+	unsigned res = 0;
+	for (int i = 0; str[i] != 0; ++i) {
+		res += (unsigned)str[i];
+		res %= CONST_2;
+	}
+	return 1 + res;
+}
+
+int FindNode(hashTable_t* map, const char* str) {
+	unsigned x = Func1;
+	unsigned y = Func2;
+	unsigned index = 0;
 	for (int i = 0; i < map->size; ++i) {
 		index = (x + i * y) % (map->size);
 		node_t* node = &map->nodes[index];
-		if (node->isFilled == 1 && node->key == key)
+		if (node->isFilled == 1 && strcmp(node->value, str) == 0)
 			return 1;
 		else if (node->isFilled == 0)
 			return 0;
@@ -61,12 +74,12 @@ int FindNode(hashTable_t* map, int key) {
 	return 0;
 }
 
-void AddNode(hashTable_t* map, int key, char* str) {
-	int x = key % CONST_1;
-	int y = 1 + (key % CONST_2);
-	int index = 0;
-	if (FindNode(map, key) == 1)
+void AddNode(hashTable_t* map, const char* str) {
+	if (FindNode(map, str) == 1)
 		return;
+	unsigned x = Func1;
+	unsigned y = Func2;
+	unsigned index = 0;
 	for (int i = 0; i < map->size; ++i) {
 		index = (x + i * y) % (map->size);
 		node_t* node = &map->nodes[index];
@@ -75,26 +88,24 @@ void AddNode(hashTable_t* map, int key, char* str) {
 			if (node->value == NULL)
 				return;
 			node->isFilled = 1;
-			node->key = key;
 			return;
 		}
 	}
 }
 
-void RemoveNode(hashTable_t* map, int key) {
-	if (FindNode(map, key) == 0)
+void RemoveNode(hashTable_t* map, const char* str) {
+	if (FindNode(map, str) == 0)
 		return;
-	int x = key % CONST_1;
-	int y = 1 + (key % CONST_2);
-	int index = 0;
+	unsigned x = Func1;
+	unsigned y = Func2;
+	unsigned index = 0;
 	for (int i = 0; i < map->size; ++i) {
 		index = (x + i * y) % (map->size);
 		node_t* node = &map->nodes[index];
-		if (node->isFilled == 1 && node->key == key) {
+		if (node->isFilled == 1 && strcmp(node->value, str) == 0) {
 			node->isFilled = 0;
 			free(node->value);
 			node->value = NULL;
-			node->key = 0;
 			return;
 		}
 	}
@@ -107,35 +118,36 @@ void FreeTable(hashTable_t* table) {
 			table->nodes[i].value = NULL;
 		}
 	free(table->nodes);
-	free(table);
+	table->nodes = NULL;
+	table->size = 0;
 	return;
 }
 
 int Interface() {
 	char buf[INPUT_SIZE] = { 0 };
 	char action = 0;
-	int key = 0;
-	hashTable_t* table = TableInit(SIZEMAP);
-	if (table == NULL)
+	char str[INPUT_SIZE] = { 0 };
+	hashTable_t table = TableInit(MAP_SIZE);
+	if (table.size == 0)
 		return 0;
 	while (fgets(buf, INPUT_SIZE, stdin) != NULL) {
-		sscanf(buf, "%c %d", &action, &key);
+		sscanf(buf, "%c %s", &action, &str);
 		switch (action) {
 		case 'a':
-			AddNode(table, key, "line");
+			AddNode(&table, str);
 			break;
 		case 'r':
-			RemoveNode(table, key);
+			RemoveNode(&table, str);
 			break;
 		case 'f':
-			fprintf(stdout, "%s\n", FindNode(table, key) ? "yes" : "no");
+			fprintf(stdout, "%s\n", FindNode(&table, str) ? "yes" : "no");
 			break;
 		default:
-			FreeTable(table);
+			FreeTable(&table);
 			return 0;
 		}
 	}
-	FreeTable(table);
+	FreeTable(&table);
 	return 1;
 }
 
