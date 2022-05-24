@@ -3,7 +3,7 @@
 #include <string.h>
 
 #define INPUT_SIZE 128
-#define MAP_SIZE 4000133
+#define TABLE_SIZE 4000133
 #define CONST_1 4000133
 #define CONST_2 9157
 
@@ -127,7 +127,7 @@ int Interface() {
 	char buf[INPUT_SIZE] = { 0 };
 	char action = 0;
 	char str[INPUT_SIZE] = { 0 };
-	hashTable_t table = TableInit(MAP_SIZE);
+	hashTable_t table = TableInit(TABLE_SIZE);
 	if (table.size == 0)
 		return 0;
 	while (fgets(buf, INPUT_SIZE, stdin) != NULL) {
